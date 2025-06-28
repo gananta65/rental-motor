@@ -46,17 +46,15 @@ export default function BikeList() {
 
   return (
     <section id="fleet" className="py-20 px-6 max-w-6xl mx-auto">
-      <h2 className="text-3xl font-bold text-center mb-8">
-        Our Motorbike Fleet
-      </h2>
+      <h2 className="text-3xl font-bold text-center mb-8">AVAILABLE BIKES</h2>
 
-      <div className="max-w-md mx-auto mb-10">
+      <div className="max-w-md mx-auto mb-4">
         <input
           type="text"
           placeholder="Search motorbike..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-400 rounded-full transition focus:outline-none focus:ring-2 focus:ring-green-500"
+          className="w-full px-4 py-2 border rounded-full transition focus:outline-none focus:ring-2"
           style={{
             backgroundColor: "var(--background)",
             color: "var(--foreground)",
@@ -64,6 +62,14 @@ export default function BikeList() {
           }}
         />
       </div>
+
+      {/* 🔽 Teks tambahan untuk instruksi pengguna */}
+      <p
+        className="text-sm text-center mb-10"
+        style={{ color: "var(--foreground)" }}
+      >
+        Tap on a bike to view rental options and book via WhatsApp.
+      </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
         {filteredBikes.map((bike) => (

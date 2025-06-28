@@ -9,7 +9,7 @@ import { useTheme } from "next-themes";
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const { theme, resolvedTheme } = useTheme(); // ⬅️ pakai theme dari next-themes
+  const { resolvedTheme } = useTheme(); // ⬅️ pakai theme dari next-themes
 
   useEffect(() => {
     const handleScroll = () => {

@@ -10,7 +10,7 @@ export default function ThemeClientWrapper({
   children: ReactNode;
 }) {
   return (
-    <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
       {children}
     </ThemeProvider>
   );

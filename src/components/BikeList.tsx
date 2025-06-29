@@ -26,7 +26,7 @@ const bikes: Bike[] = [
   {
     id: 3,
     name: "Honda Vario",
-    pricePerDay: 85000, // Tidak ada field image
+    pricePerDay: 85000,
   },
   {
     id: 4,
@@ -54,7 +54,7 @@ export default function BikeList() {
           placeholder="Search motorbike..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full px-4 py-2 border rounded-full transition focus:outline-none focus:ring-2"
+          className="w-full px-4 py-2 border rounded-full transition focus:outline-none focus:ring-2 placeholder:opacity-60 placeholder:text-[color:var(--foreground)]"
           style={{
             backgroundColor: "var(--background)",
             color: "var(--foreground)",
@@ -63,7 +63,6 @@ export default function BikeList() {
         />
       </div>
 
-      {/* 🔽 Teks tambahan untuk instruksi pengguna */}
       <p
         className="text-sm text-center mb-10"
         style={{ color: "var(--foreground)" }}

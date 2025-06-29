@@ -18,3 +18,8 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   transition: background 0.3s, color 0.3s;
 }
+
+input::placeholder {
+  color: var(--foreground);
+  opacity: 0.6;
+}

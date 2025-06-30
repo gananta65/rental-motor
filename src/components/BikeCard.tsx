@@ -21,6 +21,9 @@ export default function BikeCard({
   const [imgSrc, setImgSrc] = useState(image || "/bikes/placeholder.jpg");
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
 
+  const weeklyDiscount = 100000; // diskon 100 ribu
+  const monthlyDiscount = 200000; // diskon 200 ribu
+
   const whatsappMessage = selectedOption
     ? `Hi, I want to rent the ${name} for ${selectedOption.toLowerCase()} rental.`
     : `Hi, I want to rent the ${name}.`;
@@ -42,9 +45,35 @@ export default function BikeCard({
       <div className="p-4">
         <h3 className="text-xl font-semibold">{name}</h3>
         <p className="text-sm opacity-70 mb-1">{image}</p>
-        <p className="text-lg font-bold mb-2">
-          Rp {pricePerDay.toLocaleString()} / day
-        </p>
+
+        <div className="mb-2">
+          {selectedOption === "Weekly" ? (
+            <>
+              <p className="text-sm line-through opacity-60">
+                Rp {(pricePerDay * 7).toLocaleString()} / week
+              </p>
+              <p className="text-lg font-bold text-[var(--foreground)]">
+                Rp {(pricePerDay * 7 - weeklyDiscount).toLocaleString()} / week
+              </p>
+              <p className="text-sm text-green-600">Save 100k!</p>
+            </>
+          ) : selectedOption === "Monthly" ? (
+            <>
+              <p className="text-sm line-through opacity-60">
+                Rp {(pricePerDay * 30).toLocaleString()} / month
+              </p>
+              <p className="text-lg font-bold text-[var(--foreground)]">
+                Rp {(pricePerDay * 30 - monthlyDiscount).toLocaleString()} /
+                month
+              </p>
+              <p className="text-sm text-green-600">Save 200k!</p>
+            </>
+          ) : (
+            <p className="text-lg font-bold">
+              Rp {pricePerDay.toLocaleString()} / day
+            </p>
+          )}
+        </div>
 
         <div
           className={`grid gap-3 overflow-hidden transition-all duration-500 ${
@@ -69,14 +98,13 @@ export default function BikeCard({
           ))}
 
           <a
-            href={`https://wa.me/6281234567890?text=${encodeURIComponent(
+            href={`https://wa.me/6281238973985?text=${encodeURIComponent(
               whatsappMessage
             )}`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-center gap-2 w-full py-2 rounded-full text-sm font-semibold bg-[var(--accent)] text-white hover:opacity-90 active:scale-95 transition"
           >
-            {/* WhatsApp icon */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 448 512"

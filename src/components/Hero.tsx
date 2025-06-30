@@ -1,6 +1,9 @@
 export default function Hero() {
   return (
-    <section className="relative flex flex-col items-center justify-center text-center px-6 min-h-screen overflow-hidden">
+    <section
+      id="home"
+      className="relative flex flex-col items-center justify-center text-center px-6 min-h-screen overflow-hidden"
+    >
       {/* Background image */}
       <div className="absolute inset-0 -z-10 bg-[url('/hero.webp')] bg-cover bg-center opacity-30 dark:opacity-40" />
 

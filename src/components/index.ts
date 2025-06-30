@@ -3,3 +3,4 @@ export { default as ThemeToggle } from "./FloatingButtons";
 export { default as FloatingButtons } from "./FloatingButtons";
 export { default as Navbar } from "./Navbar";
 export { default as BikeList } from "./BikeList";
+export { default as AboutUs } from "./AboutUs";

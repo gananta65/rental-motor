@@ -1,7 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Hero, ThemeToggle, FloatingButtons, Navbar } from "@/components";
+import {
+  Hero,
+  ThemeToggle,
+  FloatingButtons,
+  Navbar,
+  AboutUs,
+} from "@/components";
 import dynamic from "next/dynamic";
 
 const BikeList = dynamic(() => import("@/components/BikeList"), { ssr: false });
@@ -22,6 +28,7 @@ export default function Home() {
       <Hero />
       <FloatingButtons />
       <BikeList />
+      <AboutUs />
     </main>
   );
 }

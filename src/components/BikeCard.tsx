@@ -21,8 +21,14 @@ export default function BikeCard({
   const [imgSrc, setImgSrc] = useState(image || "/bikes/placeholder.jpg");
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
 
-  const weeklyDiscount = 100000; // diskon 100 ribu
-  const monthlyDiscount = 200000; // diskon 200 ribu
+  const weeklyDiscount = 100000;
+  const monthlyDiscount = 200000;
+
+  const pricePerWeek = pricePerDay * 7;
+  const pricePerMonth = pricePerDay * 30;
+
+  const discountedWeek = pricePerWeek - weeklyDiscount;
+  const discountedMonth = pricePerMonth - monthlyDiscount;
 
   const whatsappMessage = selectedOption
     ? `Hi, I want to rent the ${name} for ${selectedOption.toLowerCase()} rental.`
@@ -37,8 +43,8 @@ export default function BikeCard({
         src={imgSrc}
         alt={name}
         width={500}
-        height={300}
-        className="w-full h-40 object-cover"
+        height={400} // boleh ubah juga jika ingin proporsional
+        className="w-full h-64 object-cover" // <--- ini yang ditambah!
         onError={() => setImgSrc("/bikes/placeholder.jpg")}
       />
 
@@ -50,23 +56,26 @@ export default function BikeCard({
           {selectedOption === "Weekly" ? (
             <>
               <p className="text-sm line-through opacity-60">
-                Rp {(pricePerDay * 7).toLocaleString()} / week
+                Rp {pricePerWeek.toLocaleString()} / week
               </p>
               <p className="text-lg font-bold text-[var(--foreground)]">
-                Rp {(pricePerDay * 7 - weeklyDiscount).toLocaleString()} / week
+                Rp {discountedWeek.toLocaleString()} / week
               </p>
-              <p className="text-sm text-green-600">Save 100k!</p>
+              <p className="text-sm text-green-600">
+                Save Rp {weeklyDiscount / 1000}k!
+              </p>
             </>
           ) : selectedOption === "Monthly" ? (
             <>
               <p className="text-sm line-through opacity-60">
-                Rp {(pricePerDay * 30).toLocaleString()} / month
+                Rp {pricePerMonth.toLocaleString()} / month
               </p>
               <p className="text-lg font-bold text-[var(--foreground)]">
-                Rp {(pricePerDay * 30 - monthlyDiscount).toLocaleString()} /
-                month
+                Rp {discountedMonth.toLocaleString()} / month
               </p>
-              <p className="text-sm text-green-600">Save 200k!</p>
+              <p className="text-sm text-green-600">
+                Save Rp {monthlyDiscount / 1000}k!
+              </p>
             </>
           ) : (
             <p className="text-lg font-bold">

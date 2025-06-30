@@ -12,26 +12,54 @@ interface Bike {
 }
 
 const bikes: Bike[] = [
-  { id: 1, name: "Honda Scoopy", image: "", pricePerDay: 70000 },
-  { id: 2, name: "Yamaha NMAX", image: "/bikes/nmax.jpg", pricePerDay: 120000 },
-  { id: 3, name: "Honda Vario", pricePerDay: 85000 },
+  {
+    id: 1,
+    name: "New Yamaha NMAX",
+    image: "/bikes/New Yamaha NMAX.jpeg",
+    pricePerDay: 200000,
+  },
+  {
+    id: 2,
+    name: "Yamaha NMAX",
+    image: "/bikes/Yamaha NMAX.jpeg",
+    pricePerDay: 170000,
+  },
+  {
+    id: 3,
+    name: "Yamaha Lexi",
+    image: "/bikes/Yamaha LEXI.jpeg",
+    pricePerDay: 150000,
+  },
   {
     id: 4,
-    name: "Yamaha Aerox",
-    image: "/bikes/aerox.jpg",
-    pricePerDay: 100000,
+    name: "Yamaha Fazzio",
+    image: "/bikes/Yamaha Fazzio.jpeg",
+    pricePerDay: 120000,
   },
   {
     id: 5,
-    name: "Vespa Matic",
-    image: "/bikes/vespa.jpg",
-    pricePerDay: 150000,
+    name: "Honda PCX 160",
+    image: "/bikes/Honda PCX.jpeg",
+    pricePerDay: 170000,
   },
-  { id: 6, name: "Suzuki Nex", pricePerDay: 60000 },
-  { id: 7, name: "Honda Beat", image: "/bikes/beat.jpg", pricePerDay: 65000 },
-  { id: 8, name: "Yamaha X-Ride", pricePerDay: 70000 },
-  { id: 9, name: "Honda PCX", image: "/bikes/pcx.jpg", pricePerDay: 130000 },
-  { id: 10, name: "Yamaha Mio", pricePerDay: 55000 },
+  {
+    id: 6,
+    name: "Honda Vario 150",
+    image: "/bikes/Honda Vario 150.jpeg",
+    pricePerDay: 125000,
+  },
+  {
+    id: 7,
+    name: "Honda Scoopy",
+    image: "/bikes/Honda Scoopy.jpeg",
+    pricePerDay: 90000,
+  },
+  {
+    id: 8,
+    name: "New Honda Vario 125",
+    image: "/bikes/New Honda Vario 125.jpeg",
+    pricePerDay: 110000,
+  },
 ];
 
 export default function BikeList() {
@@ -66,7 +94,7 @@ export default function BikeList() {
           value={searchTerm}
           onChange={(e) => {
             setSearchTerm(e.target.value);
-            setVisibleCount(4);
+            setVisibleCount(4); // reset pagination on search
           }}
           className="w-full pl-10 pr-4 py-2 border border-foreground/40 rounded-full transition focus:outline-none focus:ring-2 focus:ring-foreground"
           style={{

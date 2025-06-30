@@ -1,6 +1,6 @@
 "use client";
 
-import { useTheme } from "next-themes"; // pastikan kamu sudah install next-themes
+import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -11,16 +11,14 @@ export default function Navbar() {
   const { theme } = useTheme();
 
   useEffect(() => {
-    setIsMounted(true); // menghindari hydration mismatch
+    setIsMounted(true);
   }, []);
 
   const [isOpen, setIsOpen] = useState(false);
 
   const navItems = [
     { label: "Home", href: "#home" },
-    { label: "Why Us", href: "#why" },
     { label: "Bikes", href: "#fleet" },
-    { label: "FAQ", href: "#faq" },
     { label: "Contact", href: "#contact" },
   ];
 
@@ -38,10 +36,7 @@ export default function Navbar() {
             height={40}
             priority
           />
-          <span
-            className="text-lg font-semibold hidden sm:inline"
-            style={{ color: "var(--foreground)" }}
-          >
+          <span className="text-lg font-semibold hidden sm:inline text-foreground">
             Arya Sedana Rental
           </span>
         </Link>
@@ -52,8 +47,7 @@ export default function Navbar() {
             <a
               key={item.href}
               href={item.href}
-              className="hover:underline transition"
-              style={{ color: "var(--foreground)" }}
+              className="hover:underline transition text-foreground"
             >
               {item.label}
             </a>
@@ -70,22 +64,26 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Mobile Nav */}
-      {isOpen && (
-        <nav className="md:hidden bg-white dark:bg-black px-6 pb-4 pt-2">
-          {navItems.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              onClick={() => setIsOpen(false)}
-              className="block py-2 text-sm border-b border-gray-200 dark:border-gray-700"
-              style={{ color: "var(--foreground)" }}
-            >
-              {item.label}
-            </a>
-          ))}
-        </nav>
-      )}
+      {/* Mobile Nav Animated */}
+      <div
+        className={`md:hidden px-6 pt-2 pb-4 bg-white dark:bg-black transition-all duration-300 ease-out overflow-hidden
+        ${
+          isOpen
+            ? "max-h-96 opacity-100 translate-y-0"
+            : "max-h-0 opacity-0 -translate-y-4"
+        }`}
+      >
+        {navItems.map((item) => (
+          <a
+            key={item.href}
+            href={item.href}
+            onClick={() => setIsOpen(false)}
+            className="block py-2 text-sm border-b border-gray-200 dark:border-gray-700 text-black dark:text-white hover:underline"
+          >
+            {item.label}
+          </a>
+        ))}
+      </div>
     </header>
   );
 }

@@ -7,6 +7,8 @@ import {
   FloatingButtons,
   Navbar,
   AboutUs,
+  Testimonials,
+  Footer,
 } from "@/components";
 import dynamic from "next/dynamic";
 
@@ -29,6 +31,8 @@ export default function Home() {
       <FloatingButtons />
       <BikeList />
       <AboutUs />
+      <Testimonials />
+      <Footer />
     </main>
   );
 }

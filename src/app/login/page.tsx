@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabaseClient } from "@/lib/supabaseClient";
 import { FloatingButtons } from "@/components";
-import LoginForm from "./components/LoginForm";
+import LoginForm from "@/app/login/components/LoginForm";
 
 export default function LoginPage() {
   const router = useRouter();

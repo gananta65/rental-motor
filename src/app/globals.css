@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fff5e1; /* krem tropis seperti pasir pantai */
-  --foreground: #3b322c; /* coklat tanah untuk teks */
+  --background: #fff5e1;
+  --foreground: #3b322c;
   --accent: #ffae00;
 }
 
 .dark {
-  --background: #2b2a28; /* abu gelap seperti batu lava */
-  --foreground: #fbe8c6; /* krem terang seperti cahaya lilin */
+  --background: #2b2a28;
+  --foreground: #fbe8c6;
   --accent: #ffcc70;
 }
 
@@ -16,7 +16,8 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
-  transition: background 0.3s, color 0.3s;
+  color-scheme: light dark;
+  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 input::placeholder {

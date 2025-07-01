@@ -1,7 +1,7 @@
-// app/layout.tsx (SERVER COMPONENT, tanpa "use client")
+// app/layout.tsx
 import "./globals.css";
 import type { Metadata } from "next";
-import ThemeClientWrapper from "@/components/ThemeClientWrapper";
+import ThemeClientWrapper from "@/components/ThemeClientWrapper"; // Masih aman dipanggil di dalam <body>
 
 export const metadata: Metadata = {
   title: "Rental Motor",
@@ -14,7 +14,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="id" suppressHydrationWarning>
+    <html lang="id">
       <body>
         <ThemeClientWrapper>{children}</ThemeClientWrapper>
       </body>

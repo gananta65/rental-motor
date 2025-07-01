@@ -6,3 +6,5 @@ export { default as BikeList } from "./BikeList";
 export { default as AboutUs } from "./AboutUs";
 export { default as Testimonials } from "./Testimonials";
 export { default as Footer } from "./Footer";
+export { default as LogoutButton } from "./LogoutButton";
+export { default as ClientOnly } from "./ClientOnly";

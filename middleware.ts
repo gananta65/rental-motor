@@ -1,21 +1,27 @@
-import { NextRequest } from "next/server";
-import { createMiddlewareSupabaseClient } from "@/lib/supabaseMiddleware";
+import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 export async function middleware(req: NextRequest) {
-  const { supabase, response } = createMiddlewareSupabaseClient(req);
+  const res = NextResponse.next();
+
+  const supabase = createMiddlewareClient({ req, res });
 
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
 
-  // Proteksi hanya halaman /admin dan turunannya
-  if (req.nextUrl.pathname.startsWith("/admin") && !session) {
-    return Response.redirect(new URL("/login", req.url));
-  }
+  console.log("🔐 Middleware user:", user);
+  console.log("🧾 Middleware error:", error);
+  console.log("🍪 Cookies:", req.cookies.getAll());
+  console.log("🌐 SUPABASE_URL:", process.env.NEXT_PUBLIC_SUPABASE_URL);
+  console.log("🌐 BASE_URL:", process.env.NEXT_PUBLIC_BASE_URL);
+  console.log("🌍 NODE_ENV:", process.env.NODE_ENV);
 
-  return response;
+  return res;
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*"], // pastikan path sesuai
 };

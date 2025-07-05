@@ -3,13 +3,13 @@
 :root {
   --background: #fff5e1;
   --foreground: #3b322c;
-  --accent: #ffae00;
+  --accent: #319795;
 }
 
 .dark {
   --background: #2b2a28;
   --foreground: #fbe8c6;
-  --accent: #ffcc70;
+  --accent: #2c7a7b;
 }
 
 body {

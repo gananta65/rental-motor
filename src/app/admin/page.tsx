@@ -1,43 +1,37 @@
-import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import { LogoutButton, FloatingButtons } from "@/components";
+// app/admin/page.tsx
+import { createSupabaseServerClient } from "@/lib/supabaseServer";
 
-export default async function AdminPage() {
-  const cookieStore = (await cookies()) as unknown as {
-    get: (name: string) => { value: string } | undefined;
-  };
-
-  // Supabase server client dengan cookie binding
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get: (key: string) => cookieStore.get(key)?.value,
-      },
-    }
-  );
+export default async function AdminDashboard() {
+  const supabase = await createSupabaseServerClient();
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    redirect("/login");
-  }
-
   return (
-    <div className="p-6 max-w-4xl mx-auto bg-[var(--background)] text-[var(--foreground)]">
-      <h1 className="text-3xl font-bold mb-4">Welcome Admin</h1>
-      <p className="text-lg">
-        You are logged in as <strong>{user.email}</strong>
-      </p>
-      <div className="mt-6">
-        <p>CRUD motor goes here...</p>
+    <section className="space-y-6">
+      <h1 className="text-2xl font-bold">Welcome, Admin!</h1>
+
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="rounded-xl border p-6 bg-[var(--card)] text-[var(--foreground)] shadow-sm">
+          <h2 className="text-lg font-semibold mb-1">Email</h2>
+          <p className="text-sm break-words">{user?.email}</p>
+        </div>
+
+        <div className="rounded-xl border p-6 bg-[var(--card)] text-[var(--foreground)] shadow-sm">
+          <h2 className="text-lg font-semibold mb-1">User ID</h2>
+          <p className="text-sm break-all">{user?.id}</p>
+        </div>
+
+        <div className="rounded-xl border p-6 bg-[var(--card)] text-[var(--foreground)] shadow-sm">
+          <h2 className="text-lg font-semibold mb-1">Role</h2>
+          <p className="text-sm">Authenticated</p>
+        </div>
       </div>
-      <LogoutButton />
-      <FloatingButtons />
-    </div>
+
+      <div className="mt-10 text-sm text-muted-foreground">
+        This is the admin dashboard. From here you can manage bikes and more.
+      </div>
+    </section>
   );
 }

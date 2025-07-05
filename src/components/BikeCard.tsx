@@ -7,6 +7,8 @@ interface BikeCardProps {
   name: string;
   image: string;
   pricePerDay: number;
+  pricePerWeek: number;
+  pricePerMonth: number;
   isOpen: boolean;
   onClick: () => void;
 }
@@ -15,20 +17,16 @@ export default function BikeCard({
   name,
   image,
   pricePerDay,
+  pricePerWeek,
+  pricePerMonth,
   isOpen,
   onClick,
 }: BikeCardProps) {
   const [imgSrc, setImgSrc] = useState(image || "/bikes/placeholder.jpg");
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
 
-  const weeklyDiscount = 100000;
-  const monthlyDiscount = 200000;
-
-  const pricePerWeek = pricePerDay * 7;
-  const pricePerMonth = pricePerDay * 30;
-
-  const discountedWeek = pricePerWeek - weeklyDiscount;
-  const discountedMonth = pricePerMonth - monthlyDiscount;
+  const pricePerWeekBefore = pricePerDay * 7;
+  const pricePerMonthBefore = pricePerDay * 30;
 
   const whatsappMessage = selectedOption
     ? `Hi, I want to rent the ${name} for ${selectedOption.toLowerCase()} rental.`
@@ -43,43 +41,36 @@ export default function BikeCard({
         src={imgSrc}
         alt={name}
         width={500}
-        height={400} // boleh ubah juga jika ingin proporsional
-        className="w-full h-64 object-cover" // <--- ini yang ditambah!
+        height={400}
+        className="w-full h-64 object-cover"
         onError={() => setImgSrc("/bikes/placeholder.jpg")}
       />
 
       <div className="p-4">
         <h3 className="text-xl font-semibold">{name}</h3>
-        <p className="text-sm opacity-70 mb-1">{image}</p>
 
         <div className="mb-2">
           {selectedOption === "Weekly" ? (
             <>
               <p className="text-sm line-through opacity-60">
-                Rp {pricePerWeek.toLocaleString()} / week
+                Rp {pricePerWeekBefore.toLocaleString("id-ID")} / week
               </p>
               <p className="text-lg font-bold text-[var(--foreground)]">
-                Rp {discountedWeek.toLocaleString()} / week
-              </p>
-              <p className="text-sm text-green-600">
-                Save Rp {weeklyDiscount / 1000}k!
+                Rp {pricePerWeek.toLocaleString("id-ID")} / week
               </p>
             </>
           ) : selectedOption === "Monthly" ? (
             <>
               <p className="text-sm line-through opacity-60">
-                Rp {pricePerMonth.toLocaleString()} / month
+                Rp {pricePerMonthBefore.toLocaleString("id-ID")} / month
               </p>
               <p className="text-lg font-bold text-[var(--foreground)]">
-                Rp {discountedMonth.toLocaleString()} / month
-              </p>
-              <p className="text-sm text-green-600">
-                Save Rp {monthlyDiscount / 1000}k!
+                Rp {pricePerMonth.toLocaleString("id-ID")} / month
               </p>
             </>
           ) : (
             <p className="text-lg font-bold">
-              Rp {pricePerDay.toLocaleString()} / day
+              Rp {pricePerDay.toLocaleString("id-ID")} / day
             </p>
           )}
         </div>

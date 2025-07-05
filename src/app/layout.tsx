@@ -1,6 +1,7 @@
 // app/layout.tsx
 import "./globals.css";
 import type { Metadata } from "next";
+import { NetworkStatusIndicator } from "@/components/NetworkStatusIndicator";
 import ThemeClientWrapper from "@/components/ThemeClientWrapper"; // Masih aman dipanggil di dalam <body>
 
 export const metadata: Metadata = {
@@ -16,6 +17,7 @@ export default function RootLayout({
   return (
     <html lang="id">
       <body>
+        <NetworkStatusIndicator />
         <ThemeClientWrapper>{children}</ThemeClientWrapper>
       </body>
     </html>

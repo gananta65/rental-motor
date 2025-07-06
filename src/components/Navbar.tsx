@@ -20,6 +20,7 @@ export default function Navbar() {
     { label: "Home", href: "#home" },
     { label: "Bikes", href: "#fleet" },
     { label: "Contact", href: "#contact" },
+    { label: "Login", href: "/login" },
   ];
 
   const logoSrc =
@@ -41,16 +42,15 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* Desktop Menu */}
         <nav className="hidden md:flex gap-6 text-sm font-medium">
           {navItems.map((item) => (
-            <a
+            <Link
               key={item.href}
               href={item.href}
               className="hover:underline transition text-foreground"
             >
               {item.label}
-            </a>
+            </Link>
           ))}
         </nav>
 

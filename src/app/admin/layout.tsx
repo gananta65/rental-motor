@@ -3,6 +3,7 @@ import { createSupabaseServerClient } from "@/lib/supabaseServer";
 import Sidebar from "./components/Sidebar";
 import { FloatingButtons } from "@/components";
 import SessionExpired from "./components/SessionExpired";
+export const dynamic = "force-dynamic"; // untuk App Router
 
 export default async function AdminLayout({
   children,

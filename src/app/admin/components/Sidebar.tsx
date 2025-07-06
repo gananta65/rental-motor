@@ -4,10 +4,12 @@ import { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { Menu } from "lucide-react";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export default function Sidebar({ email }: { email: string }) {
   const router = useRouter();
   const pathname = usePathname();
+  const supabase = createClientComponentClient();
   const [isOpen, setIsOpen] = useState(false);
 
   const handleLogout = async () => {
@@ -15,9 +17,7 @@ export default function Sidebar({ email }: { email: string }) {
     if (!confirmLogout) return;
 
     try {
-      await fetch("/api/auth/logout", { method: "POST" });
-      document.cookie = "logged_in=; Max-Age=0; path=/";
-      localStorage.removeItem("logged_in");
+      await supabase.auth.signOut();
       router.push("/login");
     } catch (error) {
       console.error("Logout failed:", error);

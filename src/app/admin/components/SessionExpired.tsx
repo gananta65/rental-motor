@@ -2,20 +2,22 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export default function SessionExpired() {
   const router = useRouter();
+  const supabase = createClientComponentClient();
 
   useEffect(() => {
     async function logoutAndRedirect() {
-      await fetch("/api/auth/logout", { method: "POST" });
+      await supabase.auth.signOut();
       setTimeout(() => {
         router.replace("/login");
       }, 2000);
     }
 
     logoutAndRedirect();
-  }, [router]);
+  }, [router, supabase]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[var(--background)] text-[var(--foreground)]">

@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export default function LoginForm() {
   const router = useRouter();
+  const supabase = createClientComponentClient();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
@@ -22,29 +24,20 @@ export default function LoginForm() {
     setIsLoading(true);
     setErrorMsg("");
 
-    try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        const message =
-          errorMessageMap[data?.error] || data?.error || "Login failed.";
-        setErrorMsg(message);
-        setIsLoading(false);
-        return;
-      }
-
+    if (error) {
+      const message =
+        errorMessageMap[error.message] || error.message || "Login failed.";
+      setErrorMsg(message);
+    } else {
       router.replace("/admin");
-    } catch {
-      setErrorMsg("Network error occurred.");
-    } finally {
-      setIsLoading(false);
     }
+
+    setIsLoading(false);
   };
 
   return (

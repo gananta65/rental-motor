@@ -34,7 +34,20 @@ export default function LoginForm() {
         errorMessageMap[error.message] || error.message || "Login failed.";
       setErrorMsg(message);
     } else {
-      router.replace("/admin");
+      // Pastikan session berhasil dibentuk setelah login
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (session) {
+        // Optional: beri delay kecil untuk memastikan session tersimpan
+        router.replace("/admin");
+        setTimeout(() => {}, 300);
+      } else {
+        setErrorMsg(
+          "Login succeeded, but session is not ready. Please try again."
+        );
+      }
     }
 
     setIsLoading(false);

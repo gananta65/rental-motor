@@ -1,28 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { FloatingButtons } from "@/components";
 import LoginForm from "@/app/login/components/LoginForm";
 
 export default function LoginPage() {
-  const router = useRouter();
   const supabase = createClientComponentClient();
   const [hasChecked, setHasChecked] = useState(false);
 
   useEffect(() => {
     const checkSession = async () => {
-      const { data } = await supabase.auth.getSession();
-      if (data.session) {
-        router.replace("/admin");
-      } else {
-        setHasChecked(true);
-      }
+      await supabase.auth.getSession(); // hanya cek, tidak redirect
+      setHasChecked(true);
     };
 
     checkSession();
-  }, [router, supabase]);
+  }, [supabase]);
 
   if (!hasChecked) return null;
 

@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import imageCompression from "browser-image-compression";
 import { formatRupiah } from "@/utils/RupiahFormatter";
 import {
   trackUploadedImage,
   deleteImageByPath,
 } from "@/utils/CleanupOrphanImages";
+import ImageAdjuster from "./ImageAdjuster";
+import { prepareImageWithPadding } from "@/utils/prepareImageWithPadding";
 
 interface Bike {
   id: string;
@@ -42,6 +43,7 @@ export default function EditBikeForm({ initialData }: { initialData: Bike }) {
     initialData.image_url
   );
   const [newImageFile, setNewImageFile] = useState<File | null>(null);
+  const [rawPreview, setRawPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
@@ -60,16 +62,25 @@ export default function EditBikeForm({ initialData }: { initialData: Bike }) {
     }));
   };
 
-  const handleImageChange = async (file: File) => {
-    const compressed = await imageCompression(file, {
-      maxWidthOrHeight: 800,
-      maxSizeMB: 1,
-      useWebWorker: true,
-    });
+  const handleFileInput = async (file: File) => {
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      const base64 = reader.result as string;
+      const padded = await prepareImageWithPadding(base64);
+      setRawPreview(padded);
+    };
+    reader.readAsDataURL(file);
+  };
 
-    const preview = URL.createObjectURL(compressed);
-    setNewImageFile(compressed);
-    setImagePreview(preview);
+  const handleDoneEdit = async (file: File, previewUrl: string) => {
+    setNewImageFile(file);
+    setImagePreview(previewUrl);
+    setRawPreview(null);
+  };
+
+  const handleRemoveImage = () => {
+    setNewImageFile(null);
+    setImagePreview("");
   };
 
   const parseRupiahToNumber = (value: string) =>
@@ -142,120 +153,147 @@ export default function EditBikeForm({ initialData }: { initialData: Bike }) {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="space-y-6 bg-[var(--card)] p-6 rounded-lg"
-    >
-      <div>
-        <label className="block font-semibold">Name</label>
-        <input
-          type="text"
-          name="name"
-          value={form.name}
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-          required
-        />
-      </div>
-
-      <div>
-        <label className="block font-semibold">Type</label>
-        <select
-          name="type"
-          value={form.type}
-          onChange={handleChange}
-          className="w-full p-2 border rounded bg-[var(--background)] text-[var(--foreground)]"
-        >
-          <option value="matic">Matic</option>
-          <option value="manual">Manual</option>
-          <option value="sport">Sport</option>
-        </select>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
+    <>
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-6 bg-[var(--card)] p-6 rounded-lg"
+      >
         <div>
-          <label className="block font-semibold">Year</label>
+          <label className="block font-semibold">Name</label>
           <input
-            type="number"
-            name="year"
-            value={form.year}
+            type="text"
+            name="name"
+            value={form.name}
             onChange={handleChange}
             className="w-full p-2 border rounded"
             required
           />
         </div>
+
         <div>
-          <label className="block font-semibold">Stock</label>
-          <input
-            type="number"
-            name="stock"
-            value={form.stock}
+          <label className="block font-semibold">Type</label>
+          <select
+            name="type"
+            value={form.type}
             onChange={handleChange}
-            className="w-full p-2 border rounded"
-            required
-          />
+            className="w-full p-2 border rounded bg-[var(--background)] text-[var(--foreground)]"
+          >
+            <option value="matic">Matic</option>
+            <option value="manual">Manual</option>
+            <option value="sport">Sport</option>
+          </select>
         </div>
-      </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {(["price_daily", "price_weekly", "price_monthly"] as PriceKey[]).map(
-          (key) => (
-            <div key={key}>
-              <label className="block font-semibold capitalize">
-                {key.replace("price_", "")} Price
-              </label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-[var(--foreground)] opacity-70">
-                  Rp
-                </span>
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  name={key}
-                  value={form[key] || ""}
-                  onChange={handleChange}
-                  className="w-full pl-10 p-2 border rounded"
-                />
-              </div>
-            </div>
-          )
-        )}
-      </div>
-
-      <div>
-        <label className="block font-semibold mb-1">Upload New Image</label>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={async (e) => {
-            const file = e.target.files?.[0];
-            if (file) await handleImageChange(file);
-          }}
-          className="w-full p-2 rounded border border-gray-300 file:bg-[var(--accent)] file:text-[var(--background)] file:rounded file:border-none file:px-4 file:py-1 file:font-medium file:cursor-pointer"
-        />
-        {imagePreview && (
-          <div className="mt-4">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={imagePreview}
-              alt="Preview"
-              className="max-w-[800px] h-auto rounded border object-cover"
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block font-semibold">Year</label>
+            <input
+              type="number"
+              name="year"
+              value={form.year}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+              required
             />
           </div>
+          <div>
+            <label className="block font-semibold">Stock</label>
+            <input
+              type="number"
+              name="stock"
+              value={form.stock}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+              required
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {(["price_daily", "price_weekly", "price_monthly"] as PriceKey[]).map(
+            (key) => (
+              <div key={key}>
+                <label className="block font-semibold capitalize">
+                  {key.replace("price_", "")} Price
+                </label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-[var(--foreground)] opacity-70">
+                    Rp
+                  </span>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    name={key}
+                    value={form[key] || ""}
+                    onChange={handleChange}
+                    className="w-full pl-10 p-2 border rounded"
+                  />
+                </div>
+              </div>
+            )
+          )}
+        </div>
+
+        <div>
+          <label className="block font-semibold mb-1">Upload New Image</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={async (e) => {
+              const file = e.target.files?.[0];
+              if (file) await handleFileInput(file);
+            }}
+            className="w-full p-2 rounded border border-gray-300 file:bg-[var(--accent)] file:text-[var(--background)] file:rounded file:border-none file:px-4 file:py-1 file:font-medium file:cursor-pointer"
+          />
+          {imagePreview && (
+            <div className="mt-4 space-y-2">
+              <img
+                src={imagePreview}
+                alt="Preview"
+                className="max-w-[800px] h-auto rounded border object-cover"
+              />
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setRawPreview(imagePreview)}
+                  className="px-3 py-1 rounded bg-yellow-500 text-white text-sm"
+                >
+                  Edit Image
+                </button>
+                <button
+                  type="button"
+                  onClick={handleRemoveImage}
+                  className="px-3 py-1 rounded bg-red-500 text-white text-sm"
+                >
+                  Remove Image
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <button
+          type="submit"
+          className="bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50"
+          disabled={loading}
+        >
+          {loading ? "Saving..." : "Update Bike"}
+        </button>
+
+        {success && (
+          <p className="text-green-600 font-medium">
+            Bike updated successfully!
+          </p>
         )}
-      </div>
+      </form>
 
-      <button
-        type="submit"
-        className="bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50"
-        disabled={loading}
-      >
-        {loading ? "Saving..." : "Update Bike"}
-      </button>
-
-      {success && (
-        <p className="text-green-600 font-medium">Bike updated successfully!</p>
+      {rawPreview && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg w-full max-w-3xl p-4">
+            <ImageAdjuster rawImage={rawPreview} onFinish={handleDoneEdit} />
+          </div>
+        </div>
       )}
-    </form>
+    </>
   );
 }

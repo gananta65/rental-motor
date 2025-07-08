@@ -250,8 +250,9 @@ export default function EditBikeForm({ initialData }: { initialData: Bike }) {
               <img
                 src={imagePreview}
                 alt="Preview"
-                className="max-w-[800px] h-auto rounded border object-cover"
+                className="w-full max-w-full h-auto rounded border object-cover"
               />
+
               <div className="flex gap-2">
                 <button
                   type="button"

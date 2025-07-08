@@ -21,7 +21,7 @@ export default function FloatingButtons() {
       {/* WhatsApp Button */}
       {isRootPage && (
         <a
-          href="https://wa.me/6281234567890"
+          href="https://wa.me/6281238973985"
           target="_blank"
           rel="noopener noreferrer"
           className="w-12 h-12 rounded-full bg-green-500 hover:bg-green-600 text-white shadow-lg flex items-center justify-center transition-colors"

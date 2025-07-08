@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Cropper, { Area } from "react-easy-crop";
 import { getCroppedImg } from "@/utils/CropImage";
 import { blobToFile } from "@/utils/BlobToFile";
@@ -22,7 +22,9 @@ export default function ImageAdjuster({
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
   const [livePreview, setLivePreview] = useState<string>(rawImage);
 
-  // Reset crop position when zoom changes
+  const cropperRef = useRef<HTMLDivElement | null>(null);
+  const previewTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   useEffect(() => {
     if (zoom !== lastZoom) {
       setCrop({ x: 0, y: 0 });
@@ -30,18 +32,44 @@ export default function ImageAdjuster({
     }
   }, [zoom, lastZoom]);
 
-  const onCropComplete = useCallback(
-    async (_: Area, croppedPixels: Area) => {
-      setCroppedAreaPixels(croppedPixels);
-      try {
-        const blob = await getCroppedImg(rawImage, croppedPixels);
-        const file = blobToFile(blob, `preview-${Date.now()}.jpg`);
-        const compressed = await compressImage(file);
-        const previewUrl = URL.createObjectURL(compressed);
-        setLivePreview(previewUrl);
-      } catch (err) {
-        console.error("Live preview failed", err);
+  // Smooth zoom for slider
+  useEffect(() => {
+    if (cropperRef.current) {
+      const transformLayer = cropperRef.current.querySelector("div > div");
+      if (transformLayer instanceof HTMLElement) {
+        transformLayer.style.transition = "transform 0.2s ease-out";
       }
+    }
+  }, [zoom]);
+
+  // Cleanup debounce on unmount
+  useEffect(() => {
+    return () => {
+      if (previewTimeoutRef.current) {
+        clearTimeout(previewTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const onCropComplete = useCallback(
+    (_: Area, croppedPixels: Area) => {
+      setCroppedAreaPixels(croppedPixels);
+
+      if (previewTimeoutRef.current) {
+        clearTimeout(previewTimeoutRef.current);
+      }
+
+      previewTimeoutRef.current = setTimeout(async () => {
+        try {
+          const blob = await getCroppedImg(rawImage, croppedPixels);
+          const file = blobToFile(blob, `preview-${Date.now()}.jpg`);
+          const compressed = await compressImage(file);
+          const previewUrl = URL.createObjectURL(compressed);
+          setLivePreview(previewUrl);
+        } catch (err) {
+          console.error("Live preview failed", err);
+        }
+      }, 300);
     },
     [rawImage]
   );
@@ -62,9 +90,12 @@ export default function ImageAdjuster({
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-6">
-      <div className="bg-white dark:bg-black rounded-xl p-4 shadow-lg w-full max-w-4xl grid sm:grid-cols-2 gap-6">
+      <div
+        className="rounded-xl p-4 shadow-lg w-full max-w-4xl grid sm:grid-cols-2 gap-6"
+        style={{ background: "var(--background)", color: "var(--foreground)" }}
+      >
         {/* Live Preview Card */}
-        <div className="rounded-xl overflow-hidden border border-gray-300 dark:border-gray-700 shadow bg-[#fcf1dd] max-w-sm mx-auto w-full">
+        <div className="rounded-xl overflow-hidden border shadow max-w-sm mx-auto w-full bg-[var(--background)] border-[var(--foreground)] text-[var(--foreground)]">
           <div className="relative w-full aspect-[4/3]">
             <Image
               src={livePreview}
@@ -82,7 +113,7 @@ export default function ImageAdjuster({
                 <button
                   key={label}
                   disabled
-                  className="w-full py-2 rounded-full border text-sm font-medium cursor-default bg-white text-gray-500 border-gray-300"
+                  className="w-full py-2 rounded-full border text-sm font-medium cursor-default bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)]"
                 >
                   {label} Rental
                 </button>
@@ -90,7 +121,8 @@ export default function ImageAdjuster({
 
               <button
                 disabled
-                className="w-full py-2 rounded-full text-sm font-semibold bg-teal-500 text-white cursor-default"
+                className="w-full py-2 rounded-full text-sm font-semibold text-white"
+                style={{ background: "var(--accent)" }}
               >
                 📱 Book via WhatsApp
               </button>
@@ -99,25 +131,54 @@ export default function ImageAdjuster({
         </div>
 
         {/* Cropper Area */}
-        <div className="relative w-full aspect-[4/3] rounded-lg overflow-hidden bg-gray-100">
-          <Cropper
-            image={rawImage}
-            crop={crop}
-            zoom={zoom}
-            zoomSpeed={0.05}
-            aspect={4 / 3}
-            onCropChange={setCrop}
-            onZoomChange={setZoom}
-            onCropComplete={onCropComplete}
-          />
+        <div className="flex flex-col gap-2">
+          <div className="text-sm mb-2">
+            <p>
+              Drag the image to adjust its position. Use your mouse wheel,
+              touchpad, or slider below to zoom in or out.
+            </p>
+          </div>
+
+          <div
+            ref={cropperRef}
+            className="relative w-full aspect-[4/3] rounded-lg overflow-hidden bg-gray-100 dark:bg-zinc-800"
+          >
+            <Cropper
+              image={rawImage}
+              crop={crop}
+              zoom={zoom}
+              zoomSpeed={0.02}
+              minZoom={1}
+              maxZoom={2.5}
+              aspect={4 / 3}
+              onCropChange={setCrop}
+              onZoomChange={setZoom}
+              onCropComplete={onCropComplete}
+              showGrid={true}
+            />
+          </div>
+
+          <div className="mt-2">
+            <label className="block text-sm mb-1">Zoom</label>
+            <input
+              type="range"
+              min={1}
+              max={2.5}
+              step={0.01}
+              value={zoom}
+              onChange={(e) => setZoom(Number(e.target.value))}
+              className="w-full accent-[var(--accent)]"
+            />
+          </div>
         </div>
 
-        {/* Buttons */}
+        {/* Action Buttons */}
         <div className="sm:col-span-2 flex justify-end gap-2 mt-2">
           <button
             type="button"
             onClick={handleDone}
-            className="px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white"
+            className="px-4 py-2 rounded text-white"
+            style={{ background: "var(--accent)" }}
           >
             Done
           </button>

@@ -1,8 +1,9 @@
 // app/layout.tsx
 import "./globals.css";
+import { Toaster } from "sonner";
 import type { Metadata } from "next";
-import { NetworkStatusIndicator } from "@/components/NetworkStatusIndicator";
-import ThemeClientWrapper from "@/components/ThemeClientWrapper"; // Masih aman dipanggil di dalam <body>
+import { NetworkStatusIndicator } from "@components/NetworkStatusIndicator";
+import ThemeClientWrapper from "@components/ThemeClientWrapper"; // Masih aman dipanggil di dalam <body>
 
 export const metadata: Metadata = {
   title: "Rental Motor",
@@ -19,6 +20,7 @@ export default function RootLayout({
       <body>
         <NetworkStatusIndicator />
         <ThemeClientWrapper>{children}</ThemeClientWrapper>
+        <Toaster richColors position="top-center" />
       </body>
     </html>
   );

@@ -27,6 +27,7 @@ export default function Sidebar({ email }: { email: string }) {
   const menuItems = [
     { href: "/admin", label: "Dashboard" },
     { href: "/admin/bikes", label: "Bikes" },
+    { href: "/admin/pages", label: "Pages" },
   ];
 
   return (

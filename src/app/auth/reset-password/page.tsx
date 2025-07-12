@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { supabaseClient } from "@/lib/supabaseClient";
+import { supabaseClient } from "@lib/supabaseClient";
 import { Loader2, CheckCircle, ArrowLeft } from "lucide-react";
 
 export default function ResetPasswordPage() {

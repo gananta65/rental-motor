@@ -9,10 +9,10 @@ import {
   AboutUs,
   Testimonials,
   Footer,
-} from "@/components";
+} from "@components/.";
 import dynamic from "next/dynamic";
 
-const BikeList = dynamic(() => import("@/components/BikeList"), { ssr: false });
+const BikeList = dynamic(() => import("@components/BikeList"), { ssr: false });
 
 export default function Home() {
   const [hasMounted, setHasMounted] = useState(false);

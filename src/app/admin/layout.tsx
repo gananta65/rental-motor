@@ -1,8 +1,8 @@
 // app/admin/layout.tsx
-import { createSupabaseServerClient } from "@/lib/supabaseServer";
-import Sidebar from "./components/Sidebar";
-import { FloatingButtons } from "@/components";
-import SessionExpired from "./components/SessionExpired";
+import { createSupabaseServerClient } from "@lib/supabaseServer";
+import Sidebar from "@components/Sidebar";
+import { FloatingButtons } from "@components/.";
+import SessionExpired from "@components/SessionExpired";
 export const dynamic = "force-dynamic"; // untuk App Router
 
 export default async function AdminLayout({

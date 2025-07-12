@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { FloatingButtons } from "@/components";
-import LoginForm from "@/app/login/components/LoginForm";
+import { FloatingButtons } from "@components/.";
+import LoginForm from "@components/LoginForm";
 
 export default function LoginPage() {
   const supabase = createClientComponentClient();

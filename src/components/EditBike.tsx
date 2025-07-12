@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { formatRupiah } from "@/utils/RupiahFormatter";
+import { formatRupiah } from "@utils/RupiahFormatter";
 import {
   trackUploadedImage,
   deleteImageByPath,
-} from "@/utils/CleanupOrphanImages";
+} from "@utils/CleanupOrphanImages";
 import ImageAdjuster from "./ImageAdjuster";
-import { prepareImageWithPadding } from "@/utils/prepareImageWithPadding";
+import BikePreviewCard from "./BikePreviewCard";
+import { prepareImageWithPadding } from "@utils/prepareImageWithPadding";
 
 interface Bike {
   id: string;
@@ -98,7 +99,7 @@ export default function EditBikeForm({ initialData }: { initialData: Bike }) {
         const formData = new FormData();
         formData.append("file", newImageFile);
 
-        const res = await fetch("/api/upload-image", {
+        const res = await fetch("/api/upload-image-bike", {
           method: "POST",
           body: formData,
         });
@@ -247,12 +248,12 @@ export default function EditBikeForm({ initialData }: { initialData: Bike }) {
           />
           {imagePreview && (
             <div className="mt-4 space-y-2">
+              {/* eslint-disable @next/next/no-img-element */}
               <img
                 src={imagePreview}
                 alt="Preview"
                 className="w-full max-w-full h-auto rounded border object-cover"
               />
-
               <div className="flex gap-2">
                 <button
                   type="button"
@@ -291,7 +292,17 @@ export default function EditBikeForm({ initialData }: { initialData: Bike }) {
       {rawPreview && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg w-full max-w-3xl p-4">
-            <ImageAdjuster rawImage={rawPreview} onFinish={handleDoneEdit} />
+            <ImageAdjuster
+              rawImage={rawPreview}
+              onFinish={handleDoneEdit}
+              PreviewComponent={({ imageUrl }) => (
+                <BikePreviewCard
+                  imageUrl={imageUrl}
+                  bikeName={form.name}
+                  priceDaily={form.price_daily}
+                />
+              )}
+            />
           </div>
         </div>
       )}

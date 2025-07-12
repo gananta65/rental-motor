@@ -1,10 +1,11 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { formatRupiah } from "@/utils/RupiahFormatter";
-import { trackUploadedImage } from "@/utils/CleanupOrphanImages";
+import { formatRupiah } from "@utils/RupiahFormatter";
+import { trackUploadedImage } from "@utils/CleanupOrphanImages";
 import ImageAdjuster from "./ImageAdjuster";
-import { prepareImageWithPadding } from "@/utils/prepareImageWithPadding";
+import { prepareImageWithPadding } from "@utils/prepareImageWithPadding";
+import BikePreviewCard from "./BikePreviewCard";
 
 const defaultBike = {
   name: "",
@@ -82,7 +83,7 @@ export default function MultipleBikesForm({
     if (input) input.value = "";
   };
 
-  const handleImageEdit = async (index: number) => {
+  const handleImageEdit = (index: number) => {
     const preview = bikes[index].image_preview;
     if (!preview) return;
     setBikes((prev) => {
@@ -117,7 +118,7 @@ export default function MultipleBikesForm({
           const formData = new FormData();
           formData.append("file", bike.image_file);
 
-          const res = await fetch("/api/upload-image", {
+          const res = await fetch("/api/upload-image-bike", {
             method: "POST",
             body: formData,
           });
@@ -278,12 +279,12 @@ export default function MultipleBikesForm({
                   ref={(el) => {
                     fileInputRefs.current[index] = el;
                   }}
-                  className="w-full p-2 rounded border border-gray-300 bg-[var(--background)] text-[var(--foreground)]
-                  file:bg-[var(--accent)] file:text-[var(--background)] file:rounded file:border-none file:px-4 file:py-1 file:font-medium file:cursor-pointer"
+                  className="w-full p-2 rounded border border-gray-300 bg-[var(--background)] text-[var(--foreground)] file:bg-[var(--accent)] file:text-[var(--background)] file:rounded file:border-none file:px-4 file:py-1 file:font-medium file:cursor-pointer"
                 />
+
                 {bike.image_preview && (
                   <div className="mt-4 space-y-2">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    {/* eslint-disable @next/next/no-img-element */}
                     <img
                       src={bike.image_preview}
                       alt="Preview"
@@ -337,14 +338,17 @@ export default function MultipleBikesForm({
       </form>
 
       {editingIndex !== null && bikes[editingIndex]?.raw_preview && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg w-full max-w-3xl p-4">
-            <ImageAdjuster
-              rawImage={bikes[editingIndex].raw_preview}
-              onFinish={handleDoneEdit}
+        <ImageAdjuster
+          rawImage={bikes[editingIndex].raw_preview}
+          onFinish={handleDoneEdit}
+          PreviewComponent={({ imageUrl }) => (
+            <BikePreviewCard
+              imageUrl={imageUrl}
+              bikeName={bikes[editingIndex].name}
+              priceDaily={bikes[editingIndex].price_daily}
             />
-          </div>
-        </div>
+          )}
+        />
       )}
     </>
   );

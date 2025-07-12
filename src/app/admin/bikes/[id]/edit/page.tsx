@@ -1,4 +1,4 @@
-import EditBikeForm from "@/app/admin/components/EditBike";
+import EditBikeForm from "@components/EditBike";
 import type { Metadata } from "next";
 
 // ✅ HARUS async dan await params (Next.js 15+)

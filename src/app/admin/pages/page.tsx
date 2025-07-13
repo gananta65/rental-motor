@@ -18,6 +18,11 @@ export default function ManagePages() {
       desc: "Edit customer reviews and ratings",
     },
     {
+      name: "Galleries",
+      href: "/admin/pages/galleries",
+      desc: "Manage customer gallery images along with optional titles and descriptions shown in the gallery section.",
+    },
+    {
       name: "Footer Info",
       href: "/admin/pages/footer",
       desc: "Edit contact info and social media links",

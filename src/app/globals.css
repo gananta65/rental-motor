@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "yet-another-react-lightbox/styles.css";
+@import "yet-another-react-lightbox/plugins/captions.css";
 
 :root {
   --background: #fff5e1;
@@ -23,4 +25,31 @@ body {
 input::placeholder {
   color: var(--foreground);
   opacity: 0.6;
+}
+
+/* Lightbox adjustment: backdrop mengikuti warna root tanpa variabel tambahan */
+.yarl__container {
+  background-color: rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Lightbox captions styling */
+.yarl__caption {
+  background: rgba(0, 0, 0, 0.6);
+  color: var(--foreground);
+  padding: 12px;
+}
+
+.yarl__caption_title {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.yarl__caption_description {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+/* Remove toolbar shadow */
+.yarl__toolbar {
+  box-shadow: none !important;
 }

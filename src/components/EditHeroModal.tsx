@@ -51,10 +51,11 @@ export default function EditHeroModal({
 
   const handleSubmit = async () => {
     setLoading(true);
-    let currentImageUrl = finalImageUrl;
-    let currentImagePath = finalImagePath;
 
     try {
+      let uploadedImageUrl = finalImageUrl;
+      let uploadedImagePath = finalImagePath;
+
       if (imageFile) {
         const formData = new FormData();
         formData.append("file", imageFile);
@@ -67,8 +68,8 @@ export default function EditHeroModal({
         const uploadData = await uploadRes.json();
         if (!uploadRes.ok) throw new Error(uploadData.error || "Upload failed");
 
-        currentImageUrl = uploadData.url;
-        currentImagePath = uploadData.path;
+        uploadedImageUrl = uploadData.url;
+        uploadedImagePath = uploadData.path;
 
         trackUploadedImage(uploadData.path);
       }
@@ -79,8 +80,8 @@ export default function EditHeroModal({
         body: JSON.stringify({
           title,
           subtitle,
-          image_url: currentImageUrl,
-          image_path: currentImagePath,
+          image_url: uploadedImageUrl,
+          image_path: uploadedImagePath,
         }),
       });
 
@@ -93,12 +94,7 @@ export default function EditHeroModal({
       onClose();
     } catch (error: unknown) {
       console.error("Edit error:", error);
-
-      if (error instanceof Error) {
-        alert(error.message || "Failed to update hero");
-      } else {
-        alert("Failed to update hero");
-      }
+      alert(error instanceof Error ? error.message : "Failed to update hero");
     } finally {
       setLoading(false);
     }
@@ -106,7 +102,7 @@ export default function EditHeroModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex justify-center items-center">
-      <div className="bg-white p-6 rounded-xl w-full max-w-lg space-y-4">
+      <div className="bg-[var(--background)] p-6 rounded-xl w-full max-w-lg space-y-4 text-[var(--foreground)]">
         <h2 className="text-xl font-bold">Edit Hero</h2>
 
         <div>
@@ -114,7 +110,7 @@ export default function EditHeroModal({
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded bg-[var(--background)] border-[var(--foreground)] text-[var(--foreground)]"
           />
         </div>
 
@@ -123,7 +119,7 @@ export default function EditHeroModal({
           <input
             value={subtitle}
             onChange={(e) => setSubtitle(e.target.value)}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded bg-[var(--background)] border-[var(--foreground)] text-[var(--foreground)]"
           />
         </div>
 
@@ -136,10 +132,10 @@ export default function EditHeroModal({
               const file = e.target.files?.[0];
               if (file) await handleFileInput(file);
             }}
-            className="w-full p-2 border rounded file:border-none file:bg-[var(--accent)] file:text-[var(--background)]"
+            className="w-full p-2 border rounded bg-[var(--background)] border-[var(--foreground)] text-[var(--foreground)] file:border-none file:bg-[var(--accent)] file:text-[var(--background)]"
           />
+          {/* eslint-disable @next/next/no-img-element */}
           {imagePreview && (
-            /* eslint-disable @next/next/no-img-element */
             <img
               src={imagePreview}
               alt="Preview"
@@ -159,14 +155,14 @@ export default function EditHeroModal({
         <div className="flex gap-2 justify-end">
           <button
             onClick={onClose}
-            className="px-4 py-2 border rounded text-gray-700"
+            className="px-4 py-2 border rounded border-[var(--foreground)] text-[var(--foreground)] bg-transparent"
             disabled={loading}
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
-            className="px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50"
+            className="px-4 py-2 bg-[var(--accent)] text-[var(--background)] rounded disabled:opacity-50"
             disabled={loading}
           >
             {loading ? "Saving..." : "Save"}

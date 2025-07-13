@@ -10,11 +10,22 @@ type HeroBody = {
   image_path: string;
 };
 
+function validateHeroBody(body: unknown): body is HeroBody {
+  return (
+    typeof body === "object" &&
+    body !== null &&
+    "image_url" in body &&
+    typeof (body as Record<string, unknown>).image_url === "string" &&
+    "image_path" in body &&
+    typeof (body as Record<string, unknown>).image_path === "string"
+  );
+}
+
 export async function POST(req: NextRequest) {
   const supabase = createRouteHandlerClient({ cookies });
-
   const { data: authData, error: authError } = await supabase.auth.getUser();
-  if (authError || !authData.user) {
+
+  if (authError || !authData?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -43,7 +54,6 @@ export async function POST(req: NextRequest) {
     .maybeSingle();
 
   const nextOrder = (lastHero?.order ?? 0) + 1;
-
   const castBody = body as HeroBody;
 
   const payload: TablesInsert<"hero_slides"> = {
@@ -80,9 +90,9 @@ export async function GET() {
 
 export async function DELETE(req: NextRequest) {
   const supabase = createRouteHandlerClient({ cookies });
-
   const { data: authData, error: authError } = await supabase.auth.getUser();
-  if (authError || !authData.user) {
+
+  if (authError || !authData?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -96,22 +106,37 @@ export async function DELETE(req: NextRequest) {
     );
   }
 
-  const { error } = await supabase.from("hero_slides").delete().eq("id", id);
+  const { data: hero, error: fetchError } = await supabase
+    .from("hero_slides")
+    .select("image_path")
+    .eq("id", id)
+    .maybeSingle();
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  if (fetchError || !hero) {
+    return NextResponse.json(
+      { error: fetchError?.message || "Hero not found." },
+      { status: 404 }
+    );
+  }
+
+  const { error: deleteError } = await supabase
+    .from("hero_slides")
+    .delete()
+    .eq("id", id);
+
+  if (deleteError) {
+    return NextResponse.json({ error: deleteError.message }, { status: 500 });
+  }
+
+  if (hero.image_path) {
+    const { error: storageError } = await supabase.storage
+      .from("hero-images") // Ganti dengan nama bucket storage Anda khusus hero
+      .remove([hero.image_path]);
+
+    if (storageError) {
+      console.error("Storage delete error:", storageError.message);
+    }
   }
 
   return NextResponse.json({ success: true });
-}
-
-function validateHeroBody(body: unknown): body is HeroBody {
-  return (
-    typeof body === "object" &&
-    body !== null &&
-    "image_url" in body &&
-    typeof (body as Record<string, unknown>).image_url === "string" &&
-    "image_path" in body &&
-    typeof (body as Record<string, unknown>).image_path === "string"
-  );
 }

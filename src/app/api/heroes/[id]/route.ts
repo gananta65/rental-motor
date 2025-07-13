@@ -52,7 +52,34 @@ export async function PATCH(
     image_path: string;
   };
 
-  const { error } = await supabase
+  const { data: existingHero, error: fetchError } = await supabase
+    .from("hero_slides")
+    .select("image_path")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (fetchError || !existingHero) {
+    return NextResponse.json(
+      { error: fetchError?.message || "Hero not found." },
+      { status: 404 }
+    );
+  }
+
+  if (existingHero.image_path && existingHero.image_path !== image_path) {
+    const { error: storageError } = await supabase.storage
+      .from("hero-images")
+      .remove([existingHero.image_path]);
+
+    if (storageError) {
+      console.error(
+        "Storage delete error:",
+        storageError.message,
+        existingHero.image_path
+      );
+    }
+  }
+
+  const { error: updateError } = await supabase
     .from("hero_slides")
     .update({
       title,
@@ -62,8 +89,8 @@ export async function PATCH(
     })
     .eq("id", id);
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  if (updateError) {
+    return NextResponse.json({ error: updateError.message }, { status: 500 });
   }
 
   return NextResponse.json({ success: true });

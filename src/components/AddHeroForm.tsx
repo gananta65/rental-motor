@@ -129,15 +129,6 @@ export default function AddHeroForm({ onSuccess }: { onSuccess: () => void }) {
             className="w-full mt-4 rounded border object-cover"
           />
         )}
-
-        {imagePreview && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={imagePreview}
-            alt="Preview"
-            className="w-full mt-4 rounded border object-cover"
-          />
-        )}
       </div>
 
       <button

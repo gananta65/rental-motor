@@ -9,6 +9,7 @@ import {
   AboutUs,
   Testimonials,
   Footer,
+  Galleries,
 } from "@components/.";
 import dynamic from "next/dynamic";
 
@@ -32,6 +33,7 @@ export default function Home() {
       <BikeList />
       <AboutUs />
       <Testimonials />
+      <Galleries />
       <Footer />
     </main>
   );

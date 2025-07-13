@@ -16,7 +16,7 @@ interface Bike {
 export default function BikeList() {
   const [openBike, setOpenBike] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [visibleCount, setVisibleCount] = useState(4);
+  const [visibleCount, setVisibleCount] = useState(6);
   const [bikes, setBikes] = useState<Bike[]>([]);
   const [loading, setLoading] = useState(true);
 

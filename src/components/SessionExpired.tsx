@@ -2,13 +2,15 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export default function SessionExpired() {
+  const supabase = createClientComponentClient();
   const router = useRouter();
 
   useEffect(() => {
     async function logoutAndRedirect() {
-      await fetch("/api/auth/logout", { method: "POST" });
+      await supabase.auth.signOut();
       setTimeout(() => {
         router.replace("/login");
       }, 2000);
